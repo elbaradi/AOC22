@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import static aoc.day01.Elf.getElvesFromFile;
 
-public class Solver {
+class Solver {
 
   private static final String INPUT_PATHNAME_TEMPLATE = "src/resources/input_day_##.txt";
   private static final String DAY = "01";
@@ -12,7 +12,7 @@ public class Solver {
   public static void main(String[] args) {
     // Problem #1
     int highestCalorieCount =
-        getElvesFromFile(getInputFilePathname()).stream()
+        getElvesFromFile(getInputPathname()).stream()
             .map(Elf::getCaloricValueOfInventory)
             .reduce(0, Integer::max);
 
@@ -20,7 +20,7 @@ public class Solver {
 
     // Problem #2
     int calorieCountOfTopThree =
-        getElvesFromFile(getInputFilePathname()).stream()
+        getElvesFromFile(getInputPathname()).stream()
             .map(Elf::getCaloricValueOfInventory)
             .sorted(Collections.reverseOrder())
             .limit(3)
@@ -30,7 +30,7 @@ public class Solver {
 
   }
 
-  public static String getInputFilePathname() {
+  public static String getInputPathname() {
     return INPUT_PATHNAME_TEMPLATE.replace("##", DAY);
   }
 

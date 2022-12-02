@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-public class Elf {
+class Elf {
 
   private final List<Item> inventory = new ArrayList<>();
 
