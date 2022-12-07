@@ -1,6 +1,6 @@
 package aoc.day02;
 
-import static aoc.day02.Guide.getGuideFromFile;
+import static aoc.day02.Game.getGamesFromFile;
 
 class Solver {
 
@@ -9,20 +9,20 @@ class Solver {
 
   public static void main(String[] args) {
     // Problem #1
-    int totalScoreWhenPlayerIsSecondColumn =
-        getGuideFromFile(getFilePathname()).getRows().stream()
-                .mapToInt(Guide.Row::calculateScoreWithPlayerColumn)
-                .sum();
-
-    System.out.println("Solution Problem #1: " + totalScoreWhenPlayerIsSecondColumn);
-
-    // Problem #2
-    int totalScoreWhenOutcomeIsSecondColumn =
-        getGuideFromFile(getFilePathname()).getRows().stream()
-            .mapToInt(Guide.Row::calculateScoreWithOutcomeColumn)
+    int totalScoreWhenPlayerMoveIsAdvisedInSecondColumn =
+        getGamesFromFile(getFilePathname()).stream()
+            .mapToInt(Game::calculateScoreWhenPlayerMoveIsAdvised)
             .sum();
 
-    System.out.println("Solution Problem #2: " + totalScoreWhenOutcomeIsSecondColumn);
+    System.out.println("Solution Problem #1: " + totalScoreWhenPlayerMoveIsAdvisedInSecondColumn);
+
+    // Problem #2
+      int totalScoreWhenOutcomeIsAdvisedInSecondColumn =
+          getGamesFromFile(getFilePathname()).stream()
+              .mapToInt(Game::calculateScoreWhenOutcomeIsAdvised)
+              .sum();
+
+      System.out.println("Solution Problem #2: " + totalScoreWhenOutcomeIsAdvisedInSecondColumn);
 
   }
 
