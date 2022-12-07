@@ -37,7 +37,6 @@ class Solver {
   }
 
   private static List<Directory> parseRawDirectories(List<String> lines) {
-    Directory currentParent = null;
     Directory current = null;
 
     List<Directory> directories = new ArrayList<>();
@@ -45,15 +44,13 @@ class Solver {
     for (String line : lines) {
       String[] tokens = line.split(" ");
       if (line.startsWith("$ cd ..")) {
-        current = currentParent;
-        currentParent = current.getParent();
+        current = current.getParent();
       }
       else if (line.startsWith("$ cd")) {
         Directory subdir = new Directory(tokens[2], current);
         if (current != null) {
           current.getSubdirectories().add(subdir);
         }
-        currentParent = current;
         directories.add(subdir);
         current = subdir;
       }
