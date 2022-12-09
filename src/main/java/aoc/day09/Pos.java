@@ -5,8 +5,8 @@ import java.util.Objects;
 import static java.lang.Math.abs;
 
 public class Pos {
-  private final int x;
-  private final int y;
+  private int x;
+  private int y;
 
   Pos(int x, int y) {
     this.x = x;
@@ -37,28 +37,31 @@ public class Pos {
     return Objects.hash(x, y);  // use Objects.hash() method to generate hash code
   }
 
-  public static Pos add(Pos one, Pos two) {
-    return new Pos(one.x + two.x, one.y + two.y);
+  public Pos add(Pos other) {
+    this.x += other.x;
+    this.y += other.y;
+
+    return this;
   }
 
   public boolean isTouching(Pos o) {
     return abs(this.x - o.x) <= 1 && abs(this.y - o.y) <= 1;
   }
 
-  public boolean isAtLeastTwoSpacesAbove(Pos o) {
-    return this.y - o.y <= -2;
+  public boolean isAbove(Pos o) {
+    return this.y - o.y <= -1;
   }
 
-  public boolean isAtLeastTwoSpacesBelow(Pos o) {
-    return this.y - o.y >= 2;
+  public boolean isBelow(Pos o) {
+    return this.y - o.y >= 1;
   }
 
-  public boolean isAtLeastTwoSpacesLeftFrom(Pos o) {
-    return this.x - o.x <= -2;
+  public boolean isLeftFrom(Pos o) {
+    return this.x - o.x <= -1;
   }
 
-  public boolean isAtLeastTwoSpacesRightFrom(Pos o) {
-    return this.x - o.x >= 2;
+  public boolean isRightFrom(Pos o) {
+    return this.x - o.x >= 1;
   }
 
 }

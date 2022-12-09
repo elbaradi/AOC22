@@ -19,32 +19,32 @@ class Solver {
     // Problem #1
     Rope ropeWithTwoKnots = new Rope(new Pos(0, 0), 2);
     instructions.forEach(
-        instruction -> ropeWithTwoKnots.moveRope(
-            instruction.getDirection(),
-            instruction.getSteps()
+        i -> ropeWithTwoKnots.moveRope(
+            i.getDirection(),
+            i.getSteps()
         )
     );
-    long uniquePositionsVisitedByTailOfShortRope =
+    long positionsVisitedByTailOfShortRope =
         ropeWithTwoKnots.getTailHistory().stream()
             .distinct()
             .count();
 
-    System.out.println("Solution Problem #1: " + uniquePositionsVisitedByTailOfShortRope);
+    System.out.println("Solution Problem #1: " + positionsVisitedByTailOfShortRope);
 
     // Problem #2
     Rope ropeWithTenKnots = new Rope(new Pos(0, 0), 10);
     instructions.forEach(
-        instruction -> ropeWithTenKnots.moveRope(
-            instruction.getDirection(),
-            instruction.getSteps()
+        i -> ropeWithTenKnots.moveRope(
+            i.getDirection(),
+            i.getSteps()
         )
     );
-    long uniquePositionsVisitedByTailOfLongRope =
+    long positionsVisitedByTailOfLongRope =
         ropeWithTenKnots.getTailHistory().stream()
             .distinct()
             .count();
 
-    System.out.println("Solution Problem #2: " + uniquePositionsVisitedByTailOfLongRope);
+    System.out.println("Solution Problem #2: " + positionsVisitedByTailOfLongRope);
   }
 
   private static List<Instruction> parseInstructions(List<String> lines) {
@@ -61,7 +61,7 @@ class Solver {
       reader.lines().forEach(lines::add);
     }
     catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Getting input went wrong!");
     }
     return lines;
   }
