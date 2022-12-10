@@ -21,7 +21,7 @@ class Solver {
     List<Integer> totals = getTotals(instructions);
 
     // Problem #1
-    // summing the values at {20, 60, 100, 140, 180, 200}
+    // summing the values at {20, 60, 100, 140, 180, 220}
     int summed = IntStream.range(0, 6).map(i -> i * 40 + 20).map(i -> i * totals.get(i - 1)).sum();
 
     System.out.println("Solution Problem #1: " + summed);
