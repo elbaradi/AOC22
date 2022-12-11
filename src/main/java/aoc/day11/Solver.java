@@ -72,10 +72,7 @@ class Solver {
             .forEach(item -> items.add(Long.parseLong(item)));
         monkey.setItems(items);
       } else if (line.startsWith("Operation:")) {
-        if (parts[4].equals("*"))
-          monkey.setOperator(Operation.valueOf("TIMES"));
-        else if (parts[4].equals("+"))
-          monkey.setOperator(Operation.valueOf("PLUS"));
+        monkey.setOperator(Operation.fromString(parts[4]));
         monkey.setTerm(parts[5]);
       } else if (line.startsWith("Test:")) {
         monkey.setTest(Long.parseLong(parts[3]));
