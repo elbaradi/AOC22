@@ -23,14 +23,15 @@ class Solver {
     List<String> lines = getRawInput();
     List<List<Pos>> rockPaths = getRockPaths(lines);
 
-    int floor = getLowest(rockPaths);
+    // Thanks Maarten, for giving me the idea to use sets! @mraasvel
     Set<Pos> rocks = getRocks(rockPaths);
-    Set<Pos> blocks = dropSand(rocks, floor, false);
 
     // Problem #1
-    long totalSand = blocks.stream()
-        .filter(block -> !rocks.contains(block))
-        .count();
+    int floor = getLowest(rockPaths);
+    Set<Pos> blocks = dropSand(rocks, floor, false);
+
+    // Set of block positions (sand + rocks), minus the set of rock positions.
+    int totalSand = blocks.size() - rocks.size();
 
     System.out.println("Solution Problem #1: " + totalSand);
 
@@ -38,9 +39,7 @@ class Solver {
     floor += 2;
     blocks = dropSand(rocks, floor, true);
 
-    totalSand = blocks.stream()
-        .filter(block -> !rocks.contains(block))
-        .count();
+    totalSand = blocks.size() - rocks.size();
 
     System.out.println("Solution Problem #2: " + totalSand);
 
