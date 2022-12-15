@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.Math.abs;
@@ -30,26 +31,50 @@ class Solver {
     System.out.println("Solution Problem #1: " + cannotBeBeacons.size());
 
     // Problem #2
-    // Looking for suggestions, will try with search ranges next
-    long tuningFrequency = 0;
-    for (int i = 0; i <= 4_000_000; i++) {
-      for (int j = 0; j <= 4_000_000; j++) {
-        Pos pos = new Pos(j, i);
-        if (closestBeacons.entrySet().stream().allMatch(
-            entry ->
-                calculateDistance(entry.getKey(), pos) > calculateDistance(entry.getKey(), entry.getValue())
-        )) {
-          tuningFrequency = (long) j * 4_000_000 + i;
-          break;
-        }
-      }
-      if (tuningFrequency != 0)
-        break;
-    }
+    Pos hiddenBeacon = getHiddenBeacon(closestBeacons);
 
+    long tuningFrequency = hiddenBeacon.x() * 4_000_000L + hiddenBeacon.y();
 
     System.out.println("Solution Problem #2: " + tuningFrequency);
 
+  }
+
+  private static Pos getHiddenBeacon(Map<Pos, Pos> closestBeacons) {
+    for (int i = 0; i <= 4_000_000; i++) {
+
+      List<Range> possibleBeacons = new ArrayList<>();
+      possibleBeacons.add(new Range(0, 4_000_000));
+
+      int y = i;
+      List<Range> noBeaconRanges =
+          closestBeacons.entrySet().stream()
+              .map(entry -> {
+            Pos sensor = entry.getKey();
+            Pos beacon = entry.getValue();
+            return getNoBeaconRangeAtY(sensor, beacon, y);
+          })
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .toList();
+      for (Range range : noBeaconRanges) {
+        possibleBeacons = Range.minus(possibleBeacons, range);
+      }
+      if (!possibleBeacons.isEmpty()) {
+        return new Pos(possibleBeacons.get(0).start, y);
+      }
+    }
+    throw new IllegalStateException("No hidden beacon found!");
+  }
+
+  private static Optional<Range> getNoBeaconRangeAtY(Pos sensor, Pos beacon, final int y) {
+
+    int diffY = abs(sensor.y() - y);
+    int dist = calculateDistance(sensor, beacon);
+
+    if (diffY <= dist)
+      return Optional.of(new Range(sensor.x() - (dist - diffY), sensor.x() + (dist - diffY)));
+
+    return Optional.empty();
   }
 
   private static Set<Pos> getSetOfPositionsAtYWhereForSureThereIsNoBeacon(Map<Pos, Pos> closestBeacons, int y) {
