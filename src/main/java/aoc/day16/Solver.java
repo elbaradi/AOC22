@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -39,18 +41,26 @@ class Solver {
     System.out.println("Solution Problem #1: " + maxPressure);
 
     // Problem #2
-    // Takes 5 minutes to compute.
-    // For every path originally generated,
-    // generates new paths for the Elephant to visit
+    // Takes 25 seconds to compute.
+    // For every set of valves originally opened,
+    // generates new paths for the Elephant to travel
     // and updates the score.
-    // The Elephant avoids valves already visited in the original path.
+    // The Elephant never opens valves already opened in the original path.
     pressureByPathMap = findPressureByPaths(start, tunnels, 26);
 
+    // Performance optimization:
+    // Once we have the pressures for every path 'you' could take,
+    // we no longer care about 'your' exact path,
+    // we only care about the set of valves you have opened.
+    // Here we filter to leave only the highest pressure per set of closed valves.
+    pressureByPathMap = getFilteredPressureByPathMap(pressureByPathMap);
+
+    // Paths with below average released pressure can be safely ignored
     long averagePressure = Math.round(pressureByPathMap.values().stream().collect(Collectors.averagingInt(i -> i)));
     pressureByPathMap = pressureByPathMap.entrySet()
-        .stream()
-        .filter(entry -> entry.getValue() >= averagePressure)
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .stream()
+            .filter(entry -> entry.getValue() >= averagePressure)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     int maxPressureWithElephantHelping = pressureByPathMap.entrySet()
         .stream()
@@ -58,6 +68,29 @@ class Solver {
         .reduce(Integer.MIN_VALUE, Integer::max);
 
     System.out.println("Solution Problem #2: " + maxPressureWithElephantHelping);
+
+  }
+
+  private static Map<String, Integer> getFilteredPressureByPathMap(Map<String, Integer> pressureByPathMap) {
+    Map<Set<String>, Integer> filteredPressureByPathMap = new HashMap<>();
+
+    pressureByPathMap.forEach(
+        (s, i) -> {
+          String[] valves = s.split("->");
+          Set<String> path = new HashSet<>();
+          for (String valve : valves)
+            if (!valve.startsWith("W"))
+              path.add(valve);
+          Integer pressure = filteredPressureByPathMap.get(path);
+          if (pressure == null || i > pressure )
+            filteredPressureByPathMap.put(path, i);
+        }
+    );
+
+    return filteredPressureByPathMap.entrySet().stream().collect(Collectors.toMap(
+                                                                     entry ->
+                                                                       entry.getKey().toString(), Map.Entry::getValue
+    ));
 
   }
 
