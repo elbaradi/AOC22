@@ -4,17 +4,21 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static aoc.day23.Direction.E;
 import static aoc.day23.Direction.N;
+import static aoc.day23.Direction.NE;
+import static aoc.day23.Direction.NW;
 import static aoc.day23.Direction.S;
+import static aoc.day23.Direction.SE;
+import static aoc.day23.Direction.SW;
 import static aoc.day23.Direction.W;
 
 class Solver {
@@ -81,58 +85,64 @@ class Solver {
     Set<Pos> proposedDuplicates = new HashSet<>();
 
     for (Pos elf : elvesAtStartOfRound) {
-      Set<Pos> adjacentElves = getAdjacentElves(elf, elvesAtStartOfRound);
-      Pos proposed = considerDirections(round, elf, adjacentElves);
-      if (proposed.equals(elf))
+      Pos proposed = considerDirections(round, elf, elvesAtStartOfRound);
+      if (proposed.equals(elf)) {
         movingElves.add(elf);
+      }
       else {
         if (proposedMoves.containsKey(proposed)) {
           proposedDuplicates.add(proposed);
           movingElves.add(elf);
         }
-        else
+        else {
           proposedMoves.put(proposed, elf);
+        }
       }
     }
 
-    for (Map.Entry<Pos,Pos> move : proposedMoves.entrySet()) {
-      if (proposedDuplicates.contains(move.getKey()))
+    for (Map.Entry<Pos, Pos> move : proposedMoves.entrySet()) {
+      if (proposedDuplicates.contains(move.getKey())) {
         movingElves.add(move.getValue());
-      else
+      }
+      else {
         movingElves.add(move.getKey());
+      }
     }
 
     return movingElves;
   }
 
-  private static Set<Pos> getAdjacentElves(Pos elf, Set<Pos> elvesAtStartOfRound) {
-    return elvesAtStartOfRound.stream().filter(elf::isAdjacent).collect(Collectors.toSet());
-  }
-
-  private static Pos considerDirections(int roundNumber, Pos elf, Set<Pos> adjacentElves) {
-    if (adjacentElves.isEmpty())
-      return elf;
-
+  private static Pos considerDirections(int roundNumber, Pos elf, Set<Pos> elves) {
     Pos[] directions = { N, S, W, E };
-    LongSummaryStatistics xStats = adjacentElves.stream().mapToLong(Pos::x).summaryStatistics();
-    LongSummaryStatistics yStats = adjacentElves.stream().mapToLong(Pos::y).summaryStatistics();
-    boolean[] conditions = {
-        yStats.getMin() >= elf.y(), // N is clear
-        yStats.getMax() <= elf.y(), // S is clear
-        xStats.getMin() >= elf.x(), // W is clear
-        xStats.getMax() <= elf.x(), // E is clear
+    Boolean[] conditions = {
+        !(elves.contains(Pos.add(elf, NW))
+          || elves.contains(Pos.add(elf, N))
+          || elves.contains(Pos.add(elf, NE))), // N is clear
+        !(elves.contains(Pos.add(elf, SW))
+          || elves.contains(Pos.add(elf, S))
+          || elves.contains(Pos.add(elf, SE))), // S is clear
+        !(elves.contains(Pos.add(elf, NW))
+          || elves.contains(Pos.add(elf, W))
+          || elves.contains(Pos.add(elf, SW))), // W is clear
+        !(elves.contains(Pos.add(elf, NE))
+          || elves.contains(Pos.add(elf, E))
+          || elves.contains(Pos.add(elf, SE))), // E is clear
     };
 
+    boolean noAdjacentElves = Arrays.stream(conditions).allMatch(x -> x);
+    if (noAdjacentElves) {
+      return elf;
+    }
+
     for (int directionsConsidered = 0; directionsConsidered < 4; directionsConsidered++) {
-        boolean directionIsClear = conditions[(roundNumber + directionsConsidered) % 4];
-        if (directionIsClear) {
-          return Pos.add(elf, directions[(roundNumber + directionsConsidered) % 4]);
-        }
+      boolean directionIsClear = conditions[(roundNumber + directionsConsidered) % 4];
+      if (directionIsClear) {
+        return Pos.add(elf, directions[(roundNumber + directionsConsidered) % 4]);
+      }
     }
 
     return elf;
   }
-
 
   private static Set<Pos> parseElves(List<String> lines) {
 
