@@ -1,4 +1,4 @@
-# Advent of Code 22
+# Advent of Code '22
 
 Learning more Java by playing around, writing readable code and designing efficient and generic solutions. 
 
@@ -20,3 +20,5 @@ Learning more Java by playing around, writing readable code and designing effici
 - Make my data classes immutable wherever possible
 - Learn to use conditional breakpoints for debugging
 - Learn to read stack trace when debugging
+
+Thanks to Maarten for being a good conversation partner, check out his Java [AOC '22](https://github.com/mraasvel/aoc-2022) here.
